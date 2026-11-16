@@ -1,0 +1,16 @@
+// Copy this file to data/<first-last>.js (remove .txt), fill it in, then add a <script> line in index.html.
+// FG% and 3P% are percentages (47.2 means 47.2%). Season labels MUST look like "2014-15".
+registerPlayer({
+  id: "first-last",          // same as the file name, lowercase with dashes
+  name: "First Last",
+  initials: "FL",
+  seasons: [
+    { season: "2014-15", team: "Team Name", gp: 82, pts: 0, reb: 0, ast: 0, fg: 0, tp: 0, blk: 0 }
+  ],
+  // Each key lists the seasons the honor was earned. Keys you don't need can be left out.
+  // Allowed keys: mvp, finals_mvp, champion, roy, dpoy, scoring, assists, steals, allstar,
+  // asg_mvp, cup_mvp, clutch, wcf_mvp, olympic
+  accolades: {
+    allstar: ["2014-15"]
+  }
+});

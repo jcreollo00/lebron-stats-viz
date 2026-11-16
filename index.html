@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeBron Stats Viz – Player Comparison</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>LeBron James <span>vs. the Greats</span></h1>
+    <p>Pick a player and a season on each side. Stats are per game; honors count everything earned up to the chosen season.</p>
+  </header>
+
+  <main class="split">
+    <section class="side" id="left"></section>
+    <section class="side" id="right"></section>
+  </main>
+
+  <footer>ICS/CINE 484 final project · Data: landofbasketball.com, Wikipedia · Add players in <code>data/</code></footer>
+
+  <script src="js/registry.js"></script>
+  <!-- One line per player. Add yours here (see CONTRIBUTING.md). -->
+  <script src="data/lebron-james.js"></script>
+  <script src="data/michael-jordan.js"></script>
+  <script src="data/kobe-bryant.js"></script>
+  <script src="data/stephen-curry.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
