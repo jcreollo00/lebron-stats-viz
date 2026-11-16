@@ -11,4 +11,4 @@
 6. Optional: add photos (see `images/players/README.md`).
 7. Open a Pull Request.
 
-Please cite where the numbers came from in the PR description, and double-check at least a few rows against Basketball-Reference.
+Please cite where the numbers came from in the PR description, and copy the numbers from the player's Basketball-Reference "Per Game" table.

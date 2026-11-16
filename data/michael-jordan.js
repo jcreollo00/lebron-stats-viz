@@ -1,9 +1,10 @@
 // Michael Jordan. Per-game regular-season stats (he did not play in 1993-94 or 1998-99 to 2000-01).
-// FG% and 3P% are stored as percentages. Source: landofbasketball.com. Honors: Wikipedia, "List of career achievements by Michael Jordan".
+// FG% and 3P% are stored as percentages. Source: Basketball-Reference.com. Honors: Wikipedia, "List of career achievements by Michael Jordan".
 registerPlayer({
   id: "michael-jordan",
   name: "Michael Jordan",
   initials: "MJ",
+  bref: "https://www.basketball-reference.com/players/j/jordami01.html",
   seasons: [
     { season: "1984-85", team: "Chicago Bulls", gp: 82, pts: 28.2, reb: 6.5, ast: 5.9, fg: 51.5, tp: 17.3, blk: 0.8 },
     { season: "1985-86", team: "Chicago Bulls", gp: 18, pts: 22.7, reb: 3.6, ast: 2.9, fg: 45.7, tp: 16.7, blk: 1.2 },

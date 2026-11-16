@@ -1,9 +1,10 @@
 // LeBron James. Per-game regular-season stats. FG% and 3P% are stored as percentages (41.7 = 41.7%).
-// Source: landofbasketball.com (per-game table). Honors: Wikipedia, "List of career achievements by LeBron James".
+// Stats: Basketball-Reference.com (Per Game, regular season).
 registerPlayer({
   id: "lebron-james",
   name: "LeBron James",
   initials: "LJ",
+  bref: "https://www.basketball-reference.com/players/j/jamesle01.html",
   seasons: [
     { season: "2003-04", team: "Cleveland Cavaliers", gp: 79, pts: 20.9, reb: 5.5, ast: 5.9, fg: 41.7, tp: 29.0, blk: 0.7 },
     { season: "2004-05", team: "Cleveland Cavaliers", gp: 80, pts: 27.2, reb: 7.4, ast: 7.2, fg: 47.2, tp: 35.1, blk: 0.7 },

@@ -4,6 +4,7 @@ registerPlayer({
   id: "first-last",          // same as the file name, lowercase with dashes
   name: "First Last",
   initials: "FL",
+  bref: "https://www.basketball-reference.com/players/x/xxxxxx01.html",  // the player's Basketball-Reference page
   seasons: [
     { season: "2014-15", team: "Team Name", gp: 82, pts: 0, reb: 0, ast: 0, fg: 0, tp: 0, blk: 0 }
   ],

@@ -10,11 +10,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #left{border-right:1px solid var(--line)}
 .pickers{display:flex;gap:8px;width:100%;justify-content:center;flex-wrap:wrap}
 select{background:#0f1117;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.95rem}
-.team{font-weight:700;font-size:1.15rem;color:var(--c);text-align:center;min-height:1.5em}
-.portrait{width:160px;height:160px;border-radius:50%;border:4px solid var(--c);background:#0f1117;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:800;color:var(--c);overflow:hidden}
-.portrait img{width:100%;height:100%;object-fit:cover}
-.pname{font-size:1.3rem;font-weight:700}
-.season-label{color:var(--muted);font-size:.85rem;margin-top:-8px}
+.team{font-weight:800;font-size:1.5rem;color:var(--c);text-align:center;min-height:1.5em}
+.portrait{position:relative;width:100%;max-width:460px;aspect-ratio:3/4;max-height:62vh;border-radius:18px;border:4px solid var(--c);background:radial-gradient(circle at 50% 35%,#222838,#0f1117);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.portrait .ini{font-size:7rem;font-weight:800;color:var(--c);opacity:.85}
+.portrait.has-img .ini{display:none}
+.portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.cap{position:absolute;left:0;right:0;bottom:0;padding:36px 14px 12px;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.pname{font-size:1.5rem;font-weight:800}
+.season-label{color:#cfd3e0;font-size:.85rem}
+.src{color:var(--muted);font-size:.8rem}
 .stats{width:100%;max-width:300px;display:grid;gap:8px}
 .stat{display:grid;grid-template-columns:52px 1fr 52px;align-items:center;gap:8px;font-size:.9rem}
 .stat .k{color:var(--muted);font-weight:600}
@@ -29,3 +33,4 @@ h2{margin:8px 0 0;font-size:1rem;color:var(--muted);text-transform:uppercase;let
 .acc li.none{justify-content:center;color:var(--muted)}
 @media(max-width:700px){.split{grid-template-columns:1fr}#left{border-right:0;border-bottom:1px solid var(--line)}}
 footer{text-align:center;color:var(--muted);font-size:.8rem;padding:10px 16px 24px}
+footer a{color:var(--accent)}

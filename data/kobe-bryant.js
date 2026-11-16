@@ -1,10 +1,11 @@
 // Kobe Bryant. Per-game regular-season stats. FG% and 3P% are stored as percentages.
-// Source: landofbasketball.com. Honors: Wikipedia, "List of career achievements by Kobe Bryant".
+// Stats: Basketball-Reference.com (Per Game, regular season).
 // Note: the 1998-99 lockout season had no All-Star Game.
 registerPlayer({
   id: "kobe-bryant",
   name: "Kobe Bryant",
   initials: "KB",
+  bref: "https://www.basketball-reference.com/players/b/bryanko01.html",
   seasons: [
     { season: "1996-97", team: "Los Angeles Lakers", gp: 71, pts: 7.6, reb: 1.9, ast: 1.3, fg: 41.7, tp: 37.5, blk: 0.3 },
     { season: "1997-98", team: "Los Angeles Lakers", gp: 79, pts: 15.4, reb: 3.1, ast: 2.5, fg: 42.8, tp: 34.1, blk: 0.5 },

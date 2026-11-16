@@ -79,16 +79,19 @@
 
     // team above portrait
     root.appendChild(el("div", { "class": "team", text: row.team }));
-    var portrait = el("div", { "class": "portrait", text: p.initials });
+    var portrait = el("div", { "class": "portrait" }, [el("span", { "class": "ini", text: p.initials })]);
     var img = new Image();
     img.alt = p.name + " " + st.season;
-    img.onload = function () { portrait.textContent = ""; portrait.appendChild(img); };
+    img.onload = function () { portrait.classList.add("has-img"); portrait.insertBefore(img, portrait.firstChild); };
     var tried = 0, paths = ["images/players/" + p.id + "/" + st.season + ".jpg", "images/players/" + p.id + ".jpg"];
     img.onerror = function () { tried++; if (tried < paths.length) img.src = paths[tried]; };
     img.src = paths[0];
+    var cap = el("div", { "class": "cap" }, [
+      el("div", { "class": "pname", text: p.name }),
+      el("div", { "class": "season-label", text: st.season + " season · " + row.gp + " games" })
+    ]);
+    portrait.appendChild(cap);
     root.appendChild(portrait);
-    root.appendChild(el("div", { "class": "pname", text: p.name }));
-    root.appendChild(el("div", { "class": "season-label", text: st.season + " season · " + row.gp + " games" }));
 
     // stats
     var o = other.player, orow = seasonRow(o, other.season);
@@ -112,6 +115,7 @@
       ul.appendChild(el("li", {}, [el("span", { text: a.label }), el("b", { text: "×" + a.count })]));
     });
     root.appendChild(ul);
+    if (p.bref) root.appendChild(el("a", { "class": "src", href: p.bref, target: "_blank", rel: "noopener", text: "Full stats on Basketball-Reference ↗" }));
   }
 
   function renderAll() { render("left"); render("right"); }

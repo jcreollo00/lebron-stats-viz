@@ -26,4 +26,4 @@ Settings → Pages → Source: *Deploy from a branch* → Branch `main`, folder 
 Add teammates under Settings → Collaborators.
 
 ## Data notes
-Per-game regular-season stats are from landofbasketball.com; honors are from Wikipedia's career-achievement lists. Only completed seasons are included.
+Per-game regular-season stats are from Basketball-Reference.com; honors are from Basketball-Reference and Wikipedia. Only completed seasons are included.

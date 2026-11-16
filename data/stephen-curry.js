@@ -1,10 +1,11 @@
 // Stephen Curry. Per-game regular-season stats through the completed 2025-26 season.
-// FG% and 3P% are stored as percentages. Source: landofbasketball.com.
+// FG% and 3P% are stored as percentages. Source: Basketball-Reference.com.
 // Honors: Wikipedia, "List of career achievements by Stephen Curry".
 registerPlayer({
   id: "stephen-curry",
   name: "Stephen Curry",
   initials: "SC",
+  bref: "https://www.basketball-reference.com/players/c/curryst01.html",
   seasons: [
     { season: "2009-10", team: "Golden State Warriors", gp: 80, pts: 17.5, reb: 4.5, ast: 5.9, fg: 46.2, tp: 43.7, blk: 0.2 },
     { season: "2010-11", team: "Golden State Warriors", gp: 74, pts: 18.6, reb: 3.9, ast: 5.8, fg: 48.0, tp: 44.2, blk: 0.3 },
