@@ -29,6 +29,24 @@ registerPlayer({
     { season: "2014-15", team: "Los Angeles Lakers", gp: 35, pts: 22.3, reb: 5.7, ast: 5.6, fg: 37.3, tp: 29.3, blk: 0.2 },
     { season: "2015-16", team: "Los Angeles Lakers", gp: 66, pts: 17.6, reb: 3.7, ast: 2.8, fg: 35.8, tp: 28.5, blk: 0.2 }
   ],
+    // Playoff per-game stats, one row per season he made the playoffs (source: Land of Basketball).
+  playoffs: [
+    { season: "1996-97", team: "Los Angeles Lakers", gp: 9, pts: 8.2, reb: 1.2, ast: 1.2, fg: 38.2, tp: 26.1, blk: 0.2 },
+    { season: "1997-98", team: "Los Angeles Lakers", gp: 11, pts: 8.7, reb: 1.9, ast: 1.5, fg: 40.8, tp: 21.4, blk: 0.7 },
+    { season: "1998-99", team: "Los Angeles Lakers", gp: 8, pts: 19.8, reb: 6.9, ast: 4.6, fg: 43.0, tp: 34.8, blk: 1.3 },
+    { season: "1999-00", team: "Los Angeles Lakers", gp: 22, pts: 21.1, reb: 4.5, ast: 4.4, fg: 44.2, tp: 34.4, blk: 1.5 },
+    { season: "2000-01", team: "Los Angeles Lakers", gp: 16, pts: 29.4, reb: 7.3, ast: 6.1, fg: 46.9, tp: 32.4, blk: 0.8 },
+    { season: "2001-02", team: "Los Angeles Lakers", gp: 19, pts: 26.6, reb: 5.8, ast: 4.6, fg: 43.4, tp: 37.9, blk: 0.9 },
+    { season: "2002-03", team: "Los Angeles Lakers", gp: 12, pts: 32.1, reb: 5.1, ast: 5.2, fg: 43.2, tp: 40.3, blk: 0.1 },
+    { season: "2003-04", team: "Los Angeles Lakers", gp: 22, pts: 24.5, reb: 4.7, ast: 5.5, fg: 41.3, tp: 24.7, blk: 0.3 },
+    { season: "2005-06", team: "Los Angeles Lakers", gp: 7, pts: 27.9, reb: 6.3, ast: 5.1, fg: 49.7, tp: 40.0, blk: 0.4 },
+    { season: "2006-07", team: "Los Angeles Lakers", gp: 5, pts: 32.8, reb: 5.2, ast: 4.4, fg: 46.2, tp: 35.7, blk: 0.4 },
+    { season: "2007-08", team: "Los Angeles Lakers", gp: 21, pts: 30.1, reb: 5.7, ast: 5.6, fg: 47.9, tp: 30.2, blk: 0.4 },
+    { season: "2008-09", team: "Los Angeles Lakers", gp: 23, pts: 30.2, reb: 5.3, ast: 5.5, fg: 45.7, tp: 34.9, blk: 0.9 },
+    { season: "2009-10", team: "Los Angeles Lakers", gp: 23, pts: 29.2, reb: 6.0, ast: 5.5, fg: 45.8, tp: 37.4, blk: 0.7 },
+    { season: "2010-11", team: "Los Angeles Lakers", gp: 10, pts: 22.8, reb: 3.4, ast: 3.3, fg: 44.6, tp: 29.3, blk: 0.3 },
+    { season: "2011-12", team: "Los Angeles Lakers", gp: 12, pts: 30.0, reb: 4.8, ast: 4.3, fg: 43.9, tp: 28.3, blk: 0.2 }
+  ],
   accolades: {
     mvp: ["2007-08"],
     champion: ["1999-00", "2000-01", "2001-02", "2008-09", "2009-10"],

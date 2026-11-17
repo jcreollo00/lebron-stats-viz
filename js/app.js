@@ -26,7 +26,8 @@
   var players = window.PLAYERS;
   var state = {
     left: { player: byId("lebron-james") || players[0], season: null },
-    right: { player: byId("michael-jordan") || players[1] || players[0], season: null }
+     right: { player: byId("michael-jordan") || players[1] || players[0], season: null },
+    mode: "reg"   // "reg" = regular season, "po" = playoffs
   };
   state.left.season = lastSeason(state.left.player);
   state.right.season = lastSeason(state.right.player);
@@ -53,6 +54,12 @@
     var r = TEAM_COLORS[seasonRow(state.right.player, state.right.season).team] || "#888";
     return r === l ? SAME_COLOR_FALLBACK : r;
   }
+    // The stat line to show: the regular season, or that season's playoffs
+  // (undefined if he didn't make the playoffs that year).
+  function statRow(p, season) {
+    if (state.mode === "reg") return seasonRow(p, season);
+    return (p.playoffs || []).filter(function (x) { return x.season === season; })[0];
+  }
 
   function el(tag, attrs, kids) {
     var e = document.createElement(tag);
@@ -74,49 +81,87 @@
 
   function render(side) {
     var root = document.getElementById(side);
-    var other = side === "left" ? state.right : state.left;
-    var st = state[side], p = st.player, row = seasonRow(p, st.season);
-    root.style.setProperty("--c", sideColor(side));
+    var st = state[side], p = st.player, row = statRow(p, st.season);
+    var color = sideColor(side);
+    root.style.setProperty("--c", color);
+    document.documentElement.style.setProperty(side === "left" ? "--cl" : "--cr", color);
     root.innerHTML = "";
 
-    // pickers
+    // ----- top row: team (outer) + pickers (inner) -----
+    var teamRow = seasonRow(p, st.season);
+    var team = el("div", { "class": "team" }, [el("small", { text: "Team" }), el("b", { text: teamRow.team.split(" ").pop() })]);
     var pSel = el("select", { "aria-label": "Player (" + side + ")" });
     players.forEach(function (q) {
       var o = el("option", { value: q.id, text: q.name }); if (q.id === p.id) o.selected = true; pSel.appendChild(o);
     });
     pSel.onchange = function () {
       st.player = byId(pSel.value);
-      var has = seasonRow(st.player, st.season);
-      if (!has) st.season = lastSeason(st.player);
+      if (!seasonRow(st.player, st.season)) st.season = lastSeason(st.player);
       update();
     };
     var ySel = el("select", { "aria-label": "Season (" + side + ")" });
     p.seasons.forEach(function (s) {
-      var o = el("option", { value: s.season, text: s.season }); if (s.season === st.season) o.selected = true; ySel.appendChild(o);
+      var text = s.season + (state.mode === "po" && !statRow(p, s.season) ? " (no playoffs)" : "");
+      var o = el("option", { value: s.season, text: text }); if (s.season === st.season) o.selected = true; ySel.appendChild(o);
     });
     ySel.onchange = function () { st.season = ySel.value; update(); };
-    root.appendChild(el("div", { "class": "pickers" }, [pSel, ySel]));
+    var pickers = el("div", { "class": "pickers" }, [
+      el("div", {}, [el("label", { text: "Player" }), pSel]),
+      el("div", {}, [el("label", { text: "Year" }), ySel])
+    ]);
+    root.appendChild(el("div", { "class": "head" }, [team, pickers]));
 
-    // team above portrait
-    root.appendChild(el("div", { "class": "team", text: row.team }));
+    // ----- accolades (only the honors earned so far) -----
+    var counts = accoladeCounts(p, st.season);
+    var ul = el("ul", { "class": "acc" });
+    var any = false;
+    ACC_ORDER.forEach(function (k) {
+      if (!counts[k]) return;
+      any = true;
+      ul.appendChild(el("li", {}, [el("span", { text: ACC_LABELS[k] }), el("b", { text: "×" + counts[k] })]));
+    });
+    if (!any) ul.appendChild(el("li", { "class": "none", text: "None yet" }));
+    var accKids = [el("h2", { text: "Accolades through " + st.season }), ul];
+    if (p.bref) accKids.push(el("a", { "class": "src", href: p.bref, target: "_blank", rel: "noopener", text: "Full stats on Basketball-Reference ↗" }));
+    root.appendChild(el("div", { "class": "accwrap" }, accKids));
+
+    // ----- stats (higher value gets a crown) -----
+    var other = side === "left" ? state.right : state.left;
+    var orow = statRow(other.player, other.season);
+    var stats = el("div", { "class": "stats" });
+    if (!row) stats.appendChild(el("p", { "class": "missed", text: "Missed the playoffs this season." }));
+    STATS.forEach(function (s) {
+      var v = row ? row[s.key] : null, ov = orow ? orow[s.key] : null;
+      var lead = v != null && ov != null && v > ov;
+      var w = v == null ? 0 : Math.min(100, v / s.max * 100);
+      stats.appendChild(el("div", { "class": "stat" + (lead ? " lead" : "") }, [
+        el("span", { "class": "k", text: s.label }),
+        el("span", { "class": "v", text: v == null ? "—" : (lead ? "  👑  " : "") + s.fmt(v) }),
+        el("div", { "class": "bar" }, [el("i", { style: "width:" + w + "%" })])
+      ]));
+    });
+    root.appendChild(stats);
+
+    // ----- big portrait (transparent PNG cutouts look best) -----
     var portrait = el("div", { "class": "portrait" }, [el("span", { "class": "ini", text: p.initials })]);
     var img = new Image();
     img.alt = p.name + " " + st.season;
     img.onload = function () { portrait.classList.add("has-img"); portrait.insertBefore(img, portrait.firstChild); };
-    var tried = 0, paths = ["images/players/" + p.id + "/" + st.season + ".jpg", "images/players/" + p.id + ".jpg"];
+    var base = "images/players/" + p.id;
+    var paths = [base + "/" + st.season + ".png", base + "/" + st.season + ".jpg", base + ".png", base + ".jpg", base + ".webp"];
+    var tried = 0;
     img.onerror = function () { tried++; if (tried < paths.length) img.src = paths[tried]; };
     img.src = paths[0];
+    root.appendChild(portrait);
+
     var age = ageIn(p, st.season);
-    var meta = st.season + " season" + (age != null ? " · Age " + age : "") + " · " + row.gp + " games";
-    var cap = el("div", { "class": "cap" }, [
+    var games = row ? row.gp + " games" : "missed the playoffs";
+    var meta = st.season + (state.mode === "po" ? " playoffs" : " season") + (age != null ? " · Age " + age : "") + " · " + games;
+    root.appendChild(el("div", { "class": "cap" }, [
       el("div", { "class": "pname", text: p.name }),
       el("div", { "class": "season-label", text: meta }),
       el("div", { "class": "season-label dim", text: "Career season " + (seasonIndex(p, st.season) + 1) + " of " + p.seasons.length })
-    ]);
-    portrait.appendChild(cap);
-    root.appendChild(portrait);
-
-    if (p.bref) root.appendChild(el("a", { "class": "src", href: p.bref, target: "_blank", rel: "noopener", text: "Full stats on Basketball-Reference ↗" }));
+    ]));
   }
 
   // Head to head: mirrored stat bars + one shared honors table
@@ -124,26 +169,37 @@
     var root = document.getElementById("h2h");
     root.innerHTML = "";
     var L = state.left, R = state.right;
-    var lr = seasonRow(L.player, L.season), rr = seasonRow(R.player, R.season);
+    var lr = statRow(L.player, L.season), rr = statRow(R.player, R.season);
     root.style.setProperty("--lc", sideColor("left"));
+
     root.style.setProperty("--rc", sideColor("right"));
 
     function nameCell(st, cls) {
       var a = ageIn(st.player, st.season);
       return el("div", { "class": "who " + cls }, [
         el("b", { text: st.player.name }),
-        el("span", { text: st.season + (a != null ? " · age " + a : "") })
-      ]);
+        el("span", { text: st.season + (state.mode === "po" ? " playoffs" : "") + (a != null ? " · age " + a : "") })      ]);
     }
-    root.appendChild(el("div", { "class": "h2h-head" }, [nameCell(L, "l"), el("h2", { text: "Head to head" }), nameCell(R, "r")]));
+      root.appendChild(el("div", { "class": "h2h-head" }, [nameCell(L, "l"), el("h2", { text: "Head to head" }), nameCell(R, "r")]));
 
+    // Say so when a player didn't make the playoffs that season
+    [L, R].forEach(function (st) {
+      if (!statRow(st.player, st.season)) {
+        root.appendChild(el("p", { "class": "missed", text: st.player.name + " didn't make the playoffs in " + st.season + "." }));
+      }
+    });
     var grid = el("div", { "class": "bfly" });
     STATS.forEach(function (s) {
-      var lv = lr[s.key], rv = rr[s.key];
-      var lLead = lv > rv, rLead = rv > lv;
-      function val(v, lead) { return el("span", { "class": "v" + (lead ? " lead" : ""), text: (lead ? "▲ " : "") + s.fmt(v) }); }
+      // null = no playoff stats for that player this season
+      var lv = lr ? lr[s.key] : null, rv = rr ? rr[s.key] : null;
+      var both = lv != null && rv != null;
+      var lLead = both && lv > rv, rLead = both && rv > lv;
+      function val(v, lead) {
+        if (v == null) return el("span", { "class": "v none", text: "—" });
+        return el("span", { "class": "v" + (lead ? " lead" : ""), text: (lead ? "👑 " : "") + s.fmt(v) });      }
       function bar(v, cls) {
-        return el("div", { "class": "track " + cls }, [el("i", { style: "width:" + Math.min(100, v / s.max * 100) + "%" })]);
+        var w = v == null ? 0 : Math.min(100, v / s.max * 100);
+        return el("div", { "class": "track " + cls }, [el("i", { style: "width:" + w + "%" })]);
       }
       grid.appendChild(el("div", { "class": "brow" }, [
         val(lv, lLead), bar(lv, "l"), el("span", { "class": "k", text: s.label }), bar(rv, "r"), val(rv, rLead)
@@ -159,15 +215,24 @@
       var a = lc[k], b = rc[k];
       if (!a && !b) return;
       any = true;
-      function n(v, lead) { return el("span", { "class": "n" + (lead ? " lead" : "") + (v ? "" : " zero"), text: v ? (lead ? "▲ " : "") + "×" + v : "–" }); }
-      tbl.appendChild(el("div", { "class": "arow" }, [n(a, a > b), el("span", { "class": "lbl", text: ACC_LABELS[k] }), n(b, b > a)]));
+      function n(v, lead) { return el("span", { "class": "n" + (lead ? " lead" : "") + (v ? "" : " zero"), text: v ? (lead ? "👑 " : "") + "×" + v : "–" }); }      tbl.appendChild(el("div", { "class": "arow" }, [n(a, a > b), el("span", { "class": "lbl", text: ACC_LABELS[k] }), n(b, b > a)]));
     });
     if (!any) tbl.appendChild(el("div", { "class": "arow none", text: "No honors yet on either side" }));
     root.appendChild(tbl);
   }
 
   // Redraw everything whenever anything changes
+  function renderMode() {
+    var sw = document.getElementById("mode");
+    sw.innerHTML = "";
+    [["reg", "Regular season"], ["po", "Playoffs"]].forEach(function (m) {
+      var b = el("button", { type: "button", "aria-pressed": String(state.mode === m[0]), text: m[1] });
+      b.onclick = function () { state.mode = m[0]; update(); };
+      sw.appendChild(b);
+    });
+  }
   function update() {
+    renderMode();
     render("left");
     render("right");
     renderH2H();

@@ -27,6 +27,19 @@ registerPlayer({
     { season: "2024-25", team: "Golden State Warriors", gp: 70, pts: 24.5, reb: 4.4, ast: 6.0, fg: 44.8, tp: 39.7, blk: 0.4 },
     { season: "2025-26", team: "Golden State Warriors", gp: 43, pts: 26.6, reb: 3.6, ast: 4.7, fg: 46.8, tp: 39.3, blk: 0.4 }
   ],
+    // Playoff per-game stats, one row per season he made the playoffs (source: Land of Basketball).
+  playoffs: [
+    { season: "2012-13", team: "Golden State Warriors", gp: 12, pts: 23.4, reb: 3.8, ast: 8.1, fg: 43.4, tp: 39.6, blk: 0.2 },
+    { season: "2013-14", team: "Golden State Warriors", gp: 7, pts: 23.0, reb: 3.6, ast: 8.4, fg: 44.0, tp: 38.6, blk: 0.1 },
+    { season: "2014-15", team: "Golden State Warriors", gp: 21, pts: 28.3, reb: 5.0, ast: 6.4, fg: 45.6, tp: 42.2, blk: 0.1 },
+    { season: "2015-16", team: "Golden State Warriors", gp: 18, pts: 25.1, reb: 5.5, ast: 5.2, fg: 43.8, tp: 40.4, blk: 0.3 },
+    { season: "2016-17", team: "Golden State Warriors", gp: 17, pts: 28.1, reb: 6.2, ast: 6.7, fg: 48.4, tp: 41.9, blk: 0.2 },
+    { season: "2017-18", team: "Golden State Warriors", gp: 15, pts: 25.5, reb: 6.1, ast: 5.4, fg: 45.1, tp: 39.5, blk: 0.7 },
+    { season: "2018-19", team: "Golden State Warriors", gp: 22, pts: 28.2, reb: 6.0, ast: 5.7, fg: 44.1, tp: 37.7, blk: 0.2 },
+    { season: "2021-22", team: "Golden State Warriors", gp: 22, pts: 27.4, reb: 5.2, ast: 5.9, fg: 45.9, tp: 39.7, blk: 0.4 },
+    { season: "2022-23", team: "Golden State Warriors", gp: 13, pts: 30.5, reb: 5.2, ast: 6.1, fg: 46.6, tp: 36.3, blk: 0.5 },
+    { season: "2024-25", team: "Golden State Warriors", gp: 8, pts: 22.6, reb: 5.3, ast: 5.1, fg: 47.7, tp: 40.0, blk: 0.8 }
+  ],
   accolades: {
     mvp: ["2014-15", "2015-16"],
     champion: ["2014-15", "2016-17", "2017-18", "2021-22"],
