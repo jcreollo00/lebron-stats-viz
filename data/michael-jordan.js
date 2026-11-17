@@ -23,6 +23,22 @@ registerPlayer({
     { season: "2001-02", team: "Washington Wizards", gp: 60, pts: 22.9, reb: 5.7, ast: 5.2, fg: 41.6, tp: 18.9, blk: 0.4 },
     { season: "2002-03", team: "Washington Wizards", gp: 82, pts: 20.0, reb: 6.1, ast: 3.8, fg: 44.5, tp: 29.1, blk: 0.5 }
   ],
+    // Playoff per-game stats, one row per season he made the playoffs (source: Land of Basketball).
+  playoffs: [
+    { season: "1984-85", team: "Chicago Bulls", gp: 4, pts: 29.3, reb: 5.8, ast: 8.5, fg: 43.6, tp: 12.5, blk: 1.0 },
+    { season: "1985-86", team: "Chicago Bulls", gp: 3, pts: 43.7, reb: 6.3, ast: 5.7, fg: 50.5, tp: 100.0, blk: 1.3 },
+    { season: "1986-87", team: "Chicago Bulls", gp: 3, pts: 35.7, reb: 7.0, ast: 6.0, fg: 41.7, tp: 40.0, blk: 2.3 },
+    { season: "1987-88", team: "Chicago Bulls", gp: 10, pts: 36.3, reb: 7.1, ast: 4.7, fg: 53.1, tp: 33.3, blk: 1.1 },
+    { season: "1988-89", team: "Chicago Bulls", gp: 17, pts: 34.8, reb: 7.0, ast: 7.6, fg: 51.0, tp: 28.6, blk: 0.8 },
+    { season: "1989-90", team: "Chicago Bulls", gp: 16, pts: 36.7, reb: 7.2, ast: 6.8, fg: 51.4, tp: 32.0, blk: 0.9 },
+    { season: "1990-91", team: "Chicago Bulls", gp: 17, pts: 31.1, reb: 6.4, ast: 8.4, fg: 52.4, tp: 38.5, blk: 1.4 },
+    { season: "1991-92", team: "Chicago Bulls", gp: 22, pts: 34.5, reb: 6.2, ast: 5.8, fg: 49.9, tp: 38.6, blk: 0.7 },
+    { season: "1992-93", team: "Chicago Bulls", gp: 19, pts: 35.1, reb: 6.7, ast: 6.0, fg: 47.5, tp: 38.9, blk: 0.9 },
+    { season: "1994-95", team: "Chicago Bulls", gp: 10, pts: 31.5, reb: 6.5, ast: 4.5, fg: 48.4, tp: 36.7, blk: 1.4 },
+    { season: "1995-96", team: "Chicago Bulls", gp: 18, pts: 30.7, reb: 4.9, ast: 4.1, fg: 45.9, tp: 40.3, blk: 0.3 },
+    { season: "1996-97", team: "Chicago Bulls", gp: 19, pts: 31.1, reb: 7.9, ast: 4.8, fg: 45.6, tp: 19.4, blk: 0.9 },
+    { season: "1997-98", team: "Chicago Bulls", gp: 21, pts: 32.4, reb: 5.1, ast: 3.5, fg: 46.2, tp: 30.2, blk: 0.6 }
+  ],
   accolades: {
     roy: ["1984-85"],
     mvp: ["1987-88", "1990-91", "1991-92", "1995-96", "1997-98"],
