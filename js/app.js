@@ -1,7 +1,8 @@
 (function () {
   var TEAM_COLORS = {
     "Cleveland Cavaliers": "#c8102e", "Miami Heat": "#e03a3e", "Los Angeles Lakers": "#a77bd6",
-    "Chicago Bulls": "#ce1141", "Washington Wizards": "#5b84c4", "Golden State Warriors": "#fdb927", "Orlando Magic": "#0077c0", "Phoenix Suns": "#e56020", "Boston Celtics": "#2a9d5c", "Milwaukee Bucks": "#3aa66b"
+    "Chicago Bulls": "#ce1141", "Washington Wizards": "#5b84c4", "Golden State Warriors": "#fdb927", "Orlando Magic": "#0077c0", "Phoenix Suns": "#e56020", "Boston Celtics": "#2a9d5c", 
+    "Milwaukee Bucks": "#3da35d"
   };
     // Used for the right side when both players wear the same team color (e.g. LeBron and Kobe on the Lakers).
   var SAME_COLOR_FALLBACK = "#c9ccd6";
