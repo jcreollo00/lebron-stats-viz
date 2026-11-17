@@ -22,6 +22,10 @@
     { key: "blk", label: "BLK", max: 3, fmt: function (v) { return v.toFixed(1); } }
   ];
 
+  // Photos are all drawn at the same height. Because each photo is framed a little differently,
+  // this nudges each player's head to about the same size. Default is 1; raise it if a head looks small.
+  var PHOTO_SCALE = { "lebron-james": 1.16, "kareem-abdul-jabbar": 1.14, "kobe-bryant": 1.14, "shaquille-oneal": 1.06, "stephen-curry": 1.08, "michael-jordan": 1 };
+
   var players = window.PLAYERS;
   var state = {
     left: { player: byId("lebron-james") || players[0], season: null },
@@ -145,6 +149,7 @@
     var portrait = el("div", { "class": "portrait" }, [el("span", { "class": "ini", text: p.initials })]);
     var img = new Image();
     img.alt = p.name + " " + st.season;
+    var sc = PHOTO_SCALE[p.id] || 1; if (sc !== 1) img.style.transform = "scale(" + sc + ")";
     img.onload = function () { portrait.classList.add("has-img"); portrait.insertBefore(img, portrait.firstChild); };
     var base = "images/players/" + p.id;
     var paths = [base + "/" + st.season + ".png", base + "/" + st.season + ".jpg", base + ".png", base + ".jpg", base + ".webp"];
