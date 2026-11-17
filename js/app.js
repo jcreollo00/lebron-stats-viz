@@ -32,6 +32,16 @@
   function seasonRow(p, s) { return p.seasons.filter(function (x) { return x.season === s; })[0]; }
   // "2014-15" -> 2014, used to compare seasons chronologically
   function startYear(s) { return parseInt(s.slice(0, 4), 10); }
+  // ↓ add these
+  function seasonIndex(p, s) { for (var i = 0; i < p.seasons.length; i++) if (p.seasons[i].season === s) return i; return -1; }
+  // Age on February 1 of the season (Basketball-Reference's convention).
+  function ageIn(p, season) {
+    if (!p.born) return null;
+    var b = p.born.split("-").map(Number);
+    var age = startYear(season) + 1 - b[0];
+    if (b[1] > 2 || (b[1] === 2 && b[2] > 1)) age--;
+    return age;
+  }
 
   function el(tag, attrs, kids) {
     var e = document.createElement(tag);
@@ -86,9 +96,12 @@
     var tried = 0, paths = ["images/players/" + p.id + "/" + st.season + ".jpg", "images/players/" + p.id + ".jpg"];
     img.onerror = function () { tried++; if (tried < paths.length) img.src = paths[tried]; };
     img.src = paths[0];
+    var age = ageIn(p, st.season);
+    var meta = st.season + " season" + (age != null ? " · Age " + age : "") + " · " + row.gp + " games";
     var cap = el("div", { "class": "cap" }, [
       el("div", { "class": "pname", text: p.name }),
-      el("div", { "class": "season-label", text: st.season + " season · " + row.gp + " games" })
+      el("div", { "class": "season-label", text: meta }),
+      el("div", { "class": "season-label dim", text: "Career season " + (seasonIndex(p, st.season) + 1) + " of " + p.seasons.length })
     ]);
     portrait.appendChild(cap);
     root.appendChild(portrait);

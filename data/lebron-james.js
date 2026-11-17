@@ -4,6 +4,7 @@ registerPlayer({
   id: "lebron-james",
   name: "LeBron James",
   initials: "LJ",
+  born: "1984-12-30",
   bref: "https://www.basketball-reference.com/players/j/jamesle01.html",
   seasons: [
     { season: "2003-04", team: "Cleveland Cavaliers", gp: 79, pts: 20.9, reb: 5.5, ast: 5.9, fg: 41.7, tp: 29.0, blk: 0.7 },

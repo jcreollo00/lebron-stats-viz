@@ -5,6 +5,8 @@ registerPlayer({
   id: "stephen-curry",
   name: "Stephen Curry",
   initials: "SC",
+  initials: "SC",
+  born: "1988-03-14",
   bref: "https://www.basketball-reference.com/players/c/curryst01.html",
   seasons: [
     { season: "2009-10", team: "Golden State Warriors", gp: 80, pts: 17.5, reb: 4.5, ast: 5.9, fg: 46.2, tp: 43.7, blk: 0.2 },

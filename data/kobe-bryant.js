@@ -5,6 +5,7 @@ registerPlayer({
   id: "kobe-bryant",
   name: "Kobe Bryant",
   initials: "KB",
+  born: "1978-08-23",
   bref: "https://www.basketball-reference.com/players/b/bryanko01.html",
   seasons: [
     { season: "1996-97", team: "Los Angeles Lakers", gp: 71, pts: 7.6, reb: 1.9, ast: 1.3, fg: 41.7, tp: 37.5, blk: 0.3 },
