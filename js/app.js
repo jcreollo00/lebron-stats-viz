@@ -135,7 +135,7 @@
       var w = v == null ? 0 : Math.min(100, v / s.max * 100);
       stats.appendChild(el("div", { "class": "stat" + (lead ? " lead" : "") }, [
         el("span", { "class": "k", text: s.label }),
-        el("span", { "class": "v", text: v == null ? "—" : (lead ? "👑 " : "") + s.fmt(v) }),
+        el("span", { "class": "v", text: v == null ? "—" : (lead ? "  👑  " : "") + s.fmt(v) }),
         el("div", { "class": "bar" }, [el("i", { style: "width:" + w + "%" })])
       ]));
     });
