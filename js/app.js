@@ -1,7 +1,7 @@
 (function () {
   var TEAM_COLORS = {
     "Cleveland Cavaliers": "#c8102e", "Miami Heat": "#e03a3e", "Los Angeles Lakers": "#a77bd6",
-    "Chicago Bulls": "#ce1141", "Washington Wizards": "#5b84c4", "Golden State Warriors": "#fdb927"
+    "Chicago Bulls": "#ce1141", "Washington Wizards": "#5b84c4", "Golden State Warriors": "#fdb927", "Orlando Magic": "#0077c0", "Phoenix Suns": "#e56020", "Boston Celtics": "#2a9d5c"
   };
     // Used for the right side when both players wear the same team color (e.g. LeBron and Kobe on the Lakers).
   var SAME_COLOR_FALLBACK = "#c9ccd6";
@@ -9,9 +9,10 @@
     champion: "NBA Champion", finals_mvp: "Finals MVP", mvp: "Regular-Season MVP", roy: "Rookie of the Year",
     dpoy: "Defensive Player of the Year", scoring: "Scoring Title", assists: "Assists Leader", steals: "Steals Leader",
     allstar: "All-Star", asg_mvp: "All-Star Game MVP", cup_mvp: "NBA Cup MVP", clutch: "Clutch Player of the Year",
-    wcf_mvp: "Western Conf. Finals MVP", olympic: "Olympic Gold"
+    wcf_mvp: "Western Conf. Finals MVP", olympic: "Olympic Gold",
+    rebounds: "Rebounding Title", blocks: "Blocks Leader"
   };
-  var ACC_ORDER = ["champion", "finals_mvp", "mvp", "roy", "dpoy", "scoring", "assists", "steals", "wcf_mvp", "cup_mvp", "clutch", "asg_mvp", "olympic", "allstar"];
+  var ACC_ORDER = ["champion", "finals_mvp", "mvp", "roy", "dpoy", "scoring", "assists", "steals", "wcf_mvp", "cup_mvp", "clutch", "asg_mvp", "olympic", "allstar", "rebounds", "blocks"];
   var STATS = [
     { key: "pts", label: "PTS", max: 40, fmt: function (v) { return v.toFixed(1); } },
     { key: "reb", label: "REB", max: 15, fmt: function (v) { return v.toFixed(1); } },
