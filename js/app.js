@@ -167,7 +167,7 @@
       var lLead = both && lv > rv, rLead = both && rv > lv;
       function val(v, lead) {
         if (v == null) return el("span", { "class": "v none", text: "—" });
-        return el("span", { "class": "v" + (lead ? " lead" : ""), text: (lead ? "👑 " : "") + s.fmt(v) });      }
+        return el("span", { "class": "v" + (lead ? " lead" : ""), text: (lead ? " 👑  " : "") + s.fmt(v) });      }
       function bar(v, cls) {
         var w = v == null ? 0 : Math.min(100, v / s.max * 100);
         return el("div", { "class": "track " + cls }, [el("i", { style: "width:" + w + "%" })]);
