@@ -22,12 +22,20 @@
     { key: "tp",  label: "3PT%", max: 50, fmt: function (v) { return v.toFixed(1) + "%"; } },
     { key: "blk", label: "BLK", max: 3, fmt: function (v) { return v.toFixed(1); } }
   ];
+    // Full names, used as the career chart's title
+  var STAT_NAMES = { pts: "Points per game", reb: "Rebounds per game", ast: "Assists per game",
+                     fg: "Field-goal %", tp: "Three-point %", blk: "Blocks per game" };
+
+  // Photos are all drawn at the same height. Because each photo is framed a little differently,
+  // this nudges each player's head to about the same size. Default is 1; raise it if a head looks small.
+  var PHOTO_SCALE = { "lebron-james": 1.16, "kareem-abdul-jabbar": 1.14, "kobe-bryant": 1.14, "shaquille-oneal": 1.06, "stephen-curry": 1.08, "michael-jordan": 1 };
 
   var players = window.PLAYERS;
   var state = {
     left: { player: byId("lebron-james") || players[0], season: null },
      right: { player: byId("michael-jordan") || players[1] || players[0], season: null },
-    mode: "reg"   // "reg" = regular season, "po" = playoffs
+        mode: "reg",  // "reg" = regular season, "po" = playoffs
+        stat: "pts"   // which stat the career charts show
   };
   state.left.season = lastSeason(state.left.player);
   state.right.season = lastSeason(state.right.player);
@@ -69,6 +77,37 @@
     (kids || []).forEach(function (c) { e.appendChild(c); });
     return e;
   }
+
+
+  // ---- helpers for the career charts ----
+  function statDef(key) { return STATS.filter(function (s) { return s.key === key; })[0]; }
+  // Every season row for the current mode (playoff list skips years he missed)
+  function statRows(p) { return state.mode === "po" ? (p.playoffs || []) : p.seasons; }
+  // Like el(), but for SVG shapes
+  function sv(tag, attrs, text) {
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  // Make something clickable with the mouse and the keyboard (Enter / Space)
+  function clickable(e, label, fn) {
+    e.setAttribute("tabindex", "0");
+    e.setAttribute("role", "button");
+    e.setAttribute("aria-label", label);
+    e.addEventListener("click", fn);
+    e.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); fn(); } });
+  }
+  // One shared hover tooltip
+  var tip = document.body.appendChild(el("div", { "class": "tip", role: "tooltip" }));
+  function showTip(html, x, y) {
+    tip.innerHTML = html;
+    tip.style.display = "block";
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = Math.min(window.innerWidth - w - 8, Math.max(8, x - w / 2)) + "px";
+    tip.style.top = (y - h - 14 < 8 ? y + 18 : y - h - 14) + "px";
+  }
+  function hideTip() { tip.style.display = "none"; }
 
   // How many of each honor a player has earned up to a season (0 if none).
   function accoladeCounts(p, season) {
@@ -146,6 +185,7 @@
     var portrait = el("div", { "class": "portrait" }, [el("span", { "class": "ini", text: p.initials })]);
     var img = new Image();
     img.alt = p.name + " " + st.season;
+    var sc = PHOTO_SCALE[p.id] || 1; if (sc !== 1) img.style.transform = "scale(" + sc + ")";
     img.onload = function () { portrait.classList.add("has-img"); portrait.insertBefore(img, portrait.firstChild); };
     var base = "images/players/" + p.id;
     var paths = [base + "/" + st.season + ".png", base + "/" + st.season + ".jpg", base + ".png", base + ".jpg", base + ".webp"];
@@ -164,6 +204,75 @@
     ]));
   }
 
+    // Career chart: the selected stat for every season, shaded by team.
+  // Both sides use the same scale, so heights compare directly. Click a season to pick it.
+  function careerChart(side) {
+    var st = state[side], p = st.player, stat = statDef(state.stat);
+    var W = 340, H = 120, m = { l: 34, r: 10, t: 10, b: 22 };
+    var pw = W - m.l - m.r, ph = H - m.t - m.b;
+    // x-axis always spans his whole career, so playoff and regular charts line up
+    var y0 = startYear(p.seasons[0].season), y1 = startYear(lastSeason(p));
+    var span = Math.max(1, y1 - y0), step = pw / span;
+    function x(s) { return m.l + (startYear(s) - y0) / span * pw; }
+    function y(v) { return m.t + (1 - Math.min(v, stat.max) / stat.max) * ph; }
+
+    var svg = sv("svg", { viewBox: "0 0 " + W + " " + H, "class": "spark", role: "img",
+      "aria-label": p.name + " " + STAT_NAMES[stat.key] + " by season" });
+
+    // background band for each team stint, with a 2px gap between stints
+    var runs = [];
+    p.seasons.forEach(function (s) {
+      var last = runs[runs.length - 1];
+      if (last && last.team === s.team) last.to = s.season; else runs.push({ team: s.team, from: s.season, to: s.season });
+    });
+    runs.forEach(function (r) {
+      var a = Math.max(m.l, x(r.from) - step / 2), b = Math.min(W - m.r, x(r.to) + step / 2);
+      if (a > m.l) a += 1; if (b < W - m.r) b -= 1;
+      svg.appendChild(sv("rect", { x: a, y: m.t, width: Math.max(0, b - a), height: ph,
+        fill: TEAM_COLORS[r.team] || "#888", "fill-opacity": 0.13 }));
+    });
+
+    // light grid lines at 0, half and max
+    [0, stat.max / 2, stat.max].forEach(function (v) {
+      svg.appendChild(sv("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), "class": v === 0 ? "axis" : "grid" }));
+      svg.appendChild(sv("text", { x: m.l - 6, y: y(v) + 3, "text-anchor": "end", "class": "tick" }, stat.fmt(v).replace(".0", "")));
+    });
+    svg.appendChild(sv("text", { x: m.l, y: H - 6, "class": "tick" }, p.seasons[0].season));
+    svg.appendChild(sv("text", { x: W - m.r, y: H - 6, "text-anchor": "end", "class": "tick" }, lastSeason(p)));
+
+    // the line, broken wherever a season is missing (retirement, missed playoffs)
+    var rows = statRows(p), d = "", prev = null;
+    rows.forEach(function (s) {
+      var gap = prev !== null && startYear(s.season) - prev > 1;
+      d += (d === "" || gap ? "M" : "L") + x(s.season).toFixed(1) + "," + y(s[stat.key]).toFixed(1);
+      prev = startYear(s.season);
+    });
+    svg.appendChild(sv("path", { d: d, "class": "line" }));
+    rows.forEach(function (s) {
+      var sel = s.season === st.season;
+      svg.appendChild(sv("circle", { cx: x(s.season), cy: y(s[stat.key]), r: sel ? 5 : 2.5, "class": sel ? "dot sel" : "dot" }));
+    });
+
+    // invisible click/hover target for every season (bigger than the dot)
+    p.seasons.forEach(function (s) {
+      var a = Math.max(m.l - 4, x(s.season) - step / 2), b = Math.min(W, x(s.season) + step / 2);
+      var hit = sv("rect", { x: a, y: m.t, width: Math.max(4, b - a), height: ph, "class": "hit" });
+      var row = rows.filter(function (q) { return q.season === s.season; })[0];
+      var age = ageIn(p, s.season);
+      var html = "<b>" + s.season + "</b> · " + s.team + (age != null ? " · age " + age : "") + "<br>" +
+        (row ? stat.fmt(row[stat.key]) + " " + stat.label : "Missed the playoffs") + "<br><span>Click to select</span>";
+      hit.addEventListener("mousemove", function (ev) { showTip(html, ev.clientX, ev.clientY); });
+      hit.addEventListener("mouseleave", hideTip);
+      clickable(hit, "Select " + s.season, function () { hideTip(); st.season = s.season; update(); });
+      svg.appendChild(hit);
+    });
+
+    return el("div", { "class": "career", style: "--c:" + sideColor(side) }, [
+      el("div", { "class": "career-title", text: (state.mode === "po" ? "Playoff career · " : "Career · ") + STAT_NAMES[stat.key] }),
+      svg,
+      el("div", { "class": "career-sub", text: "Shaded by team · click a season to select it" })
+    ]);
+  }
   // Head to head: mirrored stat bars + one shared honors table
   function renderH2H() {
     var root = document.getElementById("h2h");
@@ -188,8 +297,20 @@
         root.appendChild(el("p", { "class": "missed", text: st.player.name + " didn't make the playoffs in " + st.season + "." }));
       }
     });
-    var grid = el("div", { "class": "bfly" });
+
+        // dropdown to pick which stat the career charts show
+    var statSel = el("select", { id: "stat-pick", "aria-label": "Stat to chart" });
     STATS.forEach(function (s) {
+      var o = el("option", { value: s.key, text: STAT_NAMES[s.key] });
+      if (s.key === state.stat) o.selected = true;
+      statSel.appendChild(o);
+    });
+    statSel.onchange = function () { state.stat = statSel.value; update(); };
+    root.appendChild(el("div", { "class": "stat-pick" }, [el("label", { "for": "stat-pick", text: "Chart:" }), statSel]));
+    // both career charts side by side, above the stat bars
+    root.appendChild(el("div", { "class": "careers" }, [careerChart("left"), careerChart("right")]));
+
+    var grid = el("div", { "class": "bfly" });    STATS.forEach(function (s) {
       // null = no playoff stats for that player this season
       var lv = lr ? lr[s.key] : null, rv = rr ? rr[s.key] : null;
       var both = lv != null && rv != null;
@@ -201,9 +322,18 @@
         var w = v == null ? 0 : Math.min(100, v / s.max * 100);
         return el("div", { "class": "track " + cls }, [el("i", { style: "width:" + w + "%" })]);
       }
-      grid.appendChild(el("div", { "class": "brow" }, [
+      var row = el("div", { "class": "brow" + (state.stat === s.key ? " on" : "") }, [
         val(lv, lLead), bar(lv, "l"), el("span", { "class": "k", text: s.label }), bar(rv, "r"), val(rv, rLead)
-      ]));
+      ]);
+      // hover: who leads and by how much; click: chart this stat on both careers
+      var leader = lLead ? L.player.name : rLead ? R.player.name : null;
+      var html = "<b>" + STAT_NAMES[s.key] + "</b><br>" +
+        (leader ? leader + " by " + s.fmt(Math.abs(lv - rv)) : both ? "Tied" : "Only one player has stats") +
+        "<br><span>Click to chart it above</span>";
+      row.addEventListener("mousemove", function (ev) { showTip(html, ev.clientX, ev.clientY); });
+      row.addEventListener("mouseleave", hideTip);
+      clickable(row, "Chart " + STAT_NAMES[s.key], function () { hideTip(); state.stat = s.key; update(); });
+      grid.appendChild(row);
     });
     root.appendChild(grid);
 

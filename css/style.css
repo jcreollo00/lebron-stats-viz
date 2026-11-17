@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:1
 .divider{position:relative;width:0}
 .divider::before{content:"";position:absolute;top:-4px;bottom:-4px;left:-1px;width:2px;background:linear-gradient(transparent,rgba(255,255,255,.7) 15%,rgba(255,255,255,.7) 85%,transparent);box-shadow:0 0 18px rgba(255,255,255,.35)}
 
-.side{position:relative;--c:#888;min-width:0}
+.side{position:relative;--c:#888;min-width:0;overflow-x:clip}
 
 /* ---------- top row: team + pickers ---------- */
 .head{position:absolute;top:0;left:0;right:0;padding:18px 30px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
@@ -47,11 +47,11 @@ select option{background:#151925;color:#fff}
 .acc li.none{color:var(--muted);border-left-color:var(--line)}
 
 /* ---------- stats (inner edge, beside the face) ---------- */
-.stats{position:absolute;top:190px;right:26px;width:29%;min-width:230px;z-index:3;display:grid;gap:10px}
-#right .stats{right:auto;left:26px}
-.stat{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:10px}
-.stat .k{font-family:var(--cond);font-weight:600;font-size:1rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
-.stat .v{white-space:nowrap;font-family:var(--display);font-size:2.1rem;line-height:1;text-align:right;font-variant-numeric:tabular-nums}
+.stats{position:absolute;top:190px;right:34px;width:clamp(170px,29%,320px);z-index:3;display:grid;gap:10px;container-type:inline-size}
+#right .stats{right:auto;left:34px}
+.stat{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;column-gap:10px}
+.stat .k{min-width:0;font-family:var(--cond);font-weight:600;font-size:clamp(.75rem,6cqw,1rem);letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.stat .v{white-space:nowrap;font-family:var(--display);font-size:clamp(1.2rem,11cqw,2.1rem);line-height:1;text-align:right;font-variant-numeric:tabular-nums}
 .stat .bar{grid-column:1/-1;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin-top:2px}
 .stat .bar i{display:block;height:100%;background:var(--c);border-radius:2px;transition:width .4s ease}
 .stat.lead .v{color:var(--accent);text-shadow:0 0 18px rgba(242,177,52,.45)}
@@ -61,7 +61,12 @@ select option{background:#151925;color:#fff}
 #right .portrait{left:auto;right:16%}
 .portrait .ini{font-family:var(--display);font-size:min(30vw,16rem);color:var(--c);opacity:.18;line-height:.8;margin-bottom:8%}
 .portrait.has-img .ini{display:none}
-.portrait img{max-width:100%;max-height:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 0 40px color-mix(in srgb,var(--c) 35%,transparent));-webkit-mask-image:linear-gradient(to top,#000 88%,transparent);mask-image:linear-gradient(to top,#000 88%,transparent)}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:center bottom;transform-origin:50% 100%;filter:drop-shadow(0 0 40px color-mix(in srgb,var(--c) 35%,transparent));
+  /* soft fade on both sides and the bottom so the photo's hard edges blend into the court */
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 16%,#000 84%,transparent),linear-gradient(to top,#000 88%,transparent);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent,#000 16%,#000 84%,transparent),linear-gradient(to top,#000 88%,transparent);
+  mask-composite:intersect}
 .cap{z-index:2;position:absolute;left:0;right:0;bottom:0;padding:48px 12px 14px;text-align:center;background:linear-gradient(transparent,rgba(5,6,10,.9));pointer-events:none}
 .pname{font-family:var(--display);font-size:2.2rem;letter-spacing:.06em;line-height:1}
 .season-label{font-family:var(--cond);font-weight:600;color:#cfd3e0;letter-spacing:.16em;font-size:.9rem;text-transform:uppercase}
@@ -106,6 +111,40 @@ select option{background:#151925;color:#fff}
 .stats .missed{grid-column:1/-1;margin:0;font-family:var(--cond);letter-spacing:.06em}
 .v.none{color:var(--muted);font-weight:400}
 
+/* career chart under each photo */
+.career{width:100%;max-width:460px}
+.career-title{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.career-sub{font-size:.75rem;color:var(--muted);text-align:right}
+.spark{width:100%;height:auto;display:block}
+.spark .grid{stroke:var(--line);stroke-width:1}
+.spark .axis{stroke:#3a4052;stroke-width:1}
+.spark .tick{fill:var(--muted);font-size:9px}
+.spark .line{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.spark .dot{fill:var(--text)}
+.spark .dot.sel{fill:var(--c);stroke:var(--panel);stroke-width:2}
+.spark .hit{fill:transparent;cursor:pointer;outline:none}
+.spark .hit:hover,.spark .hit:focus-visible{fill:rgba(255,255,255,.06)}
+
+/* clickable stat rows */
+.brow{cursor:pointer;border-radius:8px}
+.brow:hover{background:rgba(255,255,255,.04)}
+.brow.on{background:rgba(242,177,52,.08);box-shadow:inset 0 0 0 1px rgba(242,177,52,.35)}
+.brow.on .k{color:var(--accent)}
+.brow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* hover tooltip */
+.tip{position:fixed;display:none;z-index:10;pointer-events:none;background:#0b0d12;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:.8rem;line-height:1.4;max-width:240px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.tip span{color:var(--muted)}
+
+/* career charts sit side by side in the Head to Head section */
+.careers{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:900px;margin:0 auto 18px}
+.careers .career{max-width:none}
+@media(max-width:700px){.careers{grid-template-columns:1fr}}
+
+/* "Chart: [stat]" dropdown above the career charts */
+.stat-pick{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px auto 10px}
+.stat-pick label{color:var(--muted);font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
 
 .season-label.dim{color:var(--muted);font-size:.78rem;letter-spacing:.12em}
 footer{position:relative;z-index:2;text-align:center;color:var(--muted);font-size:.8rem;padding:6px 16px 10px;font-family:var(--cond);letter-spacing:.06em}
@@ -120,7 +159,6 @@ footer a{color:var(--accent)}
   .accwrap{width:44%}
   .portrait{left:10%;width:80%}
   #right .portrait{right:10%}
-  .stats{width:44%;min-width:0}
-  .stat .v{font-size:1.8rem}
+  .stats{width:44%}
   .portrait{width:100%;height:55%}
 }
