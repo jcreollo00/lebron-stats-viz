@@ -3,7 +3,8 @@
 registerPlayer({
   id: "michael-jordan",
   name: "Michael Jordan",
-  initials: "MJ",
+    initials: "MJ",
+  born: "1963-02-17",
   bref: "https://www.basketball-reference.com/players/j/jordami01.html",
   seasons: [
     { season: "1984-85", team: "Chicago Bulls", gp: 82, pts: 28.2, reb: 6.5, ast: 5.9, fg: 51.5, tp: 17.3, blk: 0.8 },

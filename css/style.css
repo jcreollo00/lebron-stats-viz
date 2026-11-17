@@ -18,6 +18,7 @@ select{background:#0f1117;color:var(--text);border:1px solid var(--line);border-
 .cap{position:absolute;left:0;right:0;bottom:0;padding:36px 14px 12px;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.85))}
 .pname{font-size:1.5rem;font-weight:800}
 .season-label{color:#cfd3e0;font-size:.85rem}
+.season-label.dim{color:var(--muted);font-size:.78rem}
 .src{color:var(--muted);font-size:.8rem}
 .stats{width:100%;max-width:300px;display:grid;gap:8px}
 .stat{display:grid;grid-template-columns:52px 1fr 52px;align-items:center;gap:8px;font-size:.9rem}
