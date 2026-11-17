@@ -167,8 +167,7 @@
       var lLead = both && lv > rv, rLead = both && rv > lv;
       function val(v, lead) {
         if (v == null) return el("span", { "class": "v none", text: "—" });
-        return el("span", { "class": "v" + (lead ? " lead" : ""), text: (lead ? "▲ " : "") + s.fmt(v) });
-      }
+        return el("span", { "class": "v" + (lead ? " lead" : ""), text: (lead ? "👑 " : "") + s.fmt(v) });      }
       function bar(v, cls) {
         var w = v == null ? 0 : Math.min(100, v / s.max * 100);
         return el("div", { "class": "track " + cls }, [el("i", { style: "width:" + w + "%" })]);
@@ -187,8 +186,7 @@
       var a = lc[k], b = rc[k];
       if (!a && !b) return;
       any = true;
-      function n(v, lead) { return el("span", { "class": "n" + (lead ? " lead" : "") + (v ? "" : " zero"), text: v ? (lead ? "▲ " : "") + "×" + v : "–" }); }
-      tbl.appendChild(el("div", { "class": "arow" }, [n(a, a > b), el("span", { "class": "lbl", text: ACC_LABELS[k] }), n(b, b > a)]));
+      function n(v, lead) { return el("span", { "class": "n" + (lead ? " lead" : "") + (v ? "" : " zero"), text: v ? (lead ? "👑 " : "") + "×" + v : "–" }); }      tbl.appendChild(el("div", { "class": "arow" }, [n(a, a > b), el("span", { "class": "lbl", text: ACC_LABELS[k] }), n(b, b > a)]));
     });
     if (!any) tbl.appendChild(el("div", { "class": "arow none", text: "No honors yet on either side" }));
     root.appendChild(tbl);
