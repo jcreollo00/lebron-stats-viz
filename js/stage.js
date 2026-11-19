@@ -1,7 +1,8 @@
 // Head-to-head stage: two cartoon figures stand on a court strip under the portraits, facing each other.
 // Change a player and that figure turns, walks off its edge of the screen while the new player walks on.
-// Self-contained: reads the pickers and team colors that app.js already draws, so it needs no changes
-// to app.js. Load it after app.js. With "reduce motion" on, the figures simply appear in place.
+// The player who leads more categories wears a crown: it drops on with a bounce when he takes the lead
+// and tips off when he loses it. Self-contained: reads the pickers and team colors that app.js already
+// draws, so it needs no changes to app.js. Load it after app.js. With "reduce motion" on, the figures simply appear in place.
 (function () {
   var split = document.querySelector(".split");
   if (!split || !window.PLAYERS) return;
@@ -39,7 +40,7 @@
   var stage = document.createElement("section");
   stage.id = "stage";
   stage.setAttribute("aria-label", "The two players facing each other");
-  stage.style.cssText = "position:relative;height:250px;border-top:1px solid var(--line,#2a2f3d);" +
+  stage.style.cssText = "position:relative;height:270px;border-top:1px solid var(--line,#2a2f3d);" +
     "background:linear-gradient(#171a23,#0f1117)";
   var cv = document.createElement("canvas");
   cv.setAttribute("aria-hidden", "true");
@@ -54,7 +55,7 @@
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     FLOOR = H - 52;
-    PXI = (FLOOR - 46) / 88;              // the tallest player (7'4") just fits
+    PXI = (FLOOR - 66) / 88;              // the tallest player (7'4") just fits, with room above for the crown
   }
   resize();
   window.addEventListener("resize", resize);
@@ -78,6 +79,7 @@
       x: reduced ? standX(side) : (side === "left" ? -80 : W + 80),
       state: reduced ? "idle" : "in",
       facing: d, facingT: d, walk: 0, phase: 0, t: Math.random() * 6, ui: reduced ? 1 : 0, hopT: -1,
+      crown: { shown: false, t: -1, mode: "" },
       cur: hexToRgb(w.color), tgt: hexToRgb(w.color)
     };
   }
@@ -167,6 +169,11 @@
     k = Math.min(1, dt * 6);
     for (var i = 0; i < 3; i++) f.cur[i] += (f.tgt[i] - f.cur[i]) * k;   // jersey color glides
     if (f.hopT >= 0) { f.hopT += dt; if (f.hopT > 0.5) f.hopT = -1; }
+    if (f.state === "idle") {                // the crown drops on when he takes the lead, falls off when he loses it
+      var crowned = counts[side] > counts[side === "left" ? "right" : "left"], c = f.crown;
+      if (crowned !== c.shown) { c.shown = crowned; c.t = reduced ? 9 : 0; c.mode = crowned ? "drop" : "off"; }
+    }
+    if (f.crown.t >= 0) f.crown.t += dt;
   }
 
   function update(dt) {
@@ -297,15 +304,56 @@
     ctx.fillStyle = "#9aa1b5";
     ctx.font = "11px system-ui, sans-serif";
     ctx.fillText(heightText(f.inches) + (narrow ? "" : " \u00B7 " + f.team), f.x, FLOOR + 38);
-    if (f.ui > 0.02) {                       // categories this player leads; the better side gets the crown
-      var n = counts[side], other = counts[side === "left" ? "right" : "left"], crowned = n > other;
-      var bob = crowned ? Math.sin(f.t * 3) * 2 : 0;
+    if (f.ui > 0.02) {                       // how many categories this player leads
+      var n = counts[side], other = counts[side === "left" ? "right" : "left"];
       ctx.globalAlpha = f.ui;
-      ctx.fillStyle = crowned ? "#f2b134" : "#9aa1b5";
-      ctx.font = "800 18px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
-      ctx.fillText((crowned ? "\uD83D\uDC51 " : "") + n, f.x, headTop - 12 + bob);
+      ctx.fillStyle = n > other ? "#f2b134" : "#9aa1b5";
+      ctx.font = "800 18px system-ui, sans-serif";
+      ctx.fillText(String(n), f.x, headTop - 28);
     }
     ctx.restore();
+  }
+
+  function bounce(x) {                       // ease-out bounce, 0..1
+    var n1 = 7.5625, d1 = 2.75;
+    if (x < 1 / d1) return n1 * x * x;
+    if (x < 2 / d1) return n1 * (x -= 1.5 / d1) * x + 0.75;
+    if (x < 2.5 / d1) return n1 * (x -= 2.25 / d1) * x + 0.9375;
+    return n1 * (x -= 2.625 / d1) * x + 0.984375;
+  }
+
+  // The crown rests on the head of whoever leads. It drops in and bounces when a player takes the lead,
+  // and tips off outward, falling and fading, when he loses it.
+  function drawCrown(f, side, headTop) {
+    var c = f.crown, x = f.x, y = headTop + 4, rot = 0, a = 1, p;
+    if (c.mode === "drop") {
+      p = Math.min(1, c.t / 0.75);
+      y -= 70 * (1 - bounce(p));
+      rot = (1 - p) * 0.4 * dirIn(side);
+      a = Math.min(1, c.t / 0.15);
+    } else if (c.mode === "off") {
+      p = Math.min(1, c.t / 0.6);
+      x -= dirIn(side) * 46 * p;
+      y += 30 * p * p;
+      rot = -dirIn(side) * 1.3 * p;
+      a = 1 - p;
+    } else return;
+    a *= f.ui;
+    if (a <= 0.01) return;
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.textAlign = "center";
+    ctx.font = "22px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+    ctx.fillText("\uD83D\uDC51", 0, 0);
+    ctx.restore();
+  }
+
+  function drawAll(f, side) {
+    var top = drawFigure(f);
+    drawTags(f, side, top);
+    drawCrown(f, side, top);
   }
 
   function draw() {
@@ -322,8 +370,8 @@
     }
     ["left", "right"].forEach(function (side) {
       var slot = slots[side];
-      slot.leaving.forEach(function (f) { drawTags(f, side, drawFigure(f)); });
-      if (slot.fig) drawTags(slot.fig, side, drawFigure(slot.fig));
+      slot.leaving.forEach(function (f) { drawAll(f, side); });
+      if (slot.fig) drawAll(slot.fig, side);
     });
   }
 
