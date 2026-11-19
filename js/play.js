@@ -129,8 +129,11 @@
 
   var bar = document.createElement("div");
   bar.id = "play-bar";
+  // The extra rules keep it a full-width row even if its parent is a grid or flex container
+  // (a bare new child could otherwise be squeezed into one narrow column or cell).
   bar.style.cssText = "display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 16px;" +
-    "padding:10px 16px;border-top:1px solid var(--line,#2a2f3d);background:var(--panel,#171a23)";
+    "padding:10px 16px;min-height:56px;border-top:1px solid var(--line,#2a2f3d);background:var(--panel,#171a23);" +
+    "grid-column:1/-1;flex:0 0 100%;width:100%;box-sizing:border-box;position:relative;z-index:5";
 
   var playBtn = document.createElement("button");
   playBtn.type = "button";
