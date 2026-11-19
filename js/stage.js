@@ -108,7 +108,12 @@
     var sels = root.querySelectorAll("select"), teamEl = root.querySelector(".team");
     if (!sels.length || !teamEl) return null;
     var c = (getComputedStyle(root).getPropertyValue("--c") || "").trim();
-    return { pid: sels[0].value, team: teamEl.textContent.trim(), color: c || "#888" };
+    var pid = sels[0].value, season = sels[1] ? sels[1].value : "", p = byId(pid), team = "";
+    if (p && p.seasons) {                    // full team name straight from the data
+      p.seasons.forEach(function (s) { if (s.season === season) team = s.team; });
+    }
+    if (!team) team = teamEl.textContent.trim().replace(/^Team\s*/i, "");   // fallback: the on-screen label
+    return { pid: pid, team: team, color: c || "#888" };
   }
 
   function leaderCounts() {                  // how many categories each side leads (the ▲ marks)
@@ -292,12 +297,13 @@
     ctx.fillStyle = "#9aa1b5";
     ctx.font = "11px system-ui, sans-serif";
     ctx.fillText(heightText(f.inches) + (narrow ? "" : " \u00B7 " + f.team), f.x, FLOOR + 38);
-    if (f.ui > 0.02) {                       // how many categories this player leads
-      var n = counts[side], other = counts[side === "left" ? "right" : "left"];
+    if (f.ui > 0.02) {                       // categories this player leads; the better side gets the crown
+      var n = counts[side], other = counts[side === "left" ? "right" : "left"], crowned = n > other;
+      var bob = crowned ? Math.sin(f.t * 3) * 2 : 0;
       ctx.globalAlpha = f.ui;
-      ctx.fillStyle = n > other ? "#f2b134" : "#9aa1b5";
-      ctx.font = "800 16px system-ui, sans-serif";
-      ctx.fillText("\u25B2 " + n, f.x, headTop - 12);
+      ctx.fillStyle = crowned ? "#f2b134" : "#9aa1b5";
+      ctx.font = "800 18px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+      ctx.fillText((crowned ? "\uD83D\uDC51 " : "") + n, f.x, headTop - 12 + bob);
     }
     ctx.restore();
   }
