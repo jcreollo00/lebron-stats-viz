@@ -7,8 +7,7 @@
 // If a player sat out a year (Jordan in 1993-94), that player holds their last season and the caption says so.
 // Press anything yourself (a dropdown, the chart) and playback hands control back to you.
 (function () {
-  var split = document.querySelector(".split");
-  if (!split || !window.PLAYERS) return;
+  if (!window.PLAYERS || !document.getElementById("left") || !document.getElementById("right")) return;
 
   var SPEEDS = [
     { label: "1\u00D7", ms: 1400 },   // one season every 1.4 s: long enough for the bars, counts and crown to land
@@ -157,9 +156,13 @@
   bar.appendChild(speedBtn);
   bar.appendChild(slider);
   bar.appendChild(caption);
-  var stage = document.getElementById("stage");
+  // Placement: right above the court strip when it exists; otherwise after the panels, before the head-to-head.
+  var stage = document.getElementById("stage"), split = document.querySelector(".split");
+  var h2hEl = document.getElementById("h2h"), leftEl = document.getElementById("left");
   if (stage && stage.parentNode) stage.parentNode.insertBefore(bar, stage);
-  else split.insertAdjacentElement("afterend", bar);
+  else if (split) split.insertAdjacentElement("afterend", bar);
+  else if (h2hEl && h2hEl.parentNode) h2hEl.parentNode.insertBefore(bar, h2hEl);
+  else if (leftEl.parentNode) leftEl.parentNode.insertAdjacentElement("afterend", bar);
 
   function paint() {
     var tl = timeline(), ctl = inControl();
